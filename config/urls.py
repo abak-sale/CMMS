@@ -7,7 +7,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('assets/', include('assets.urls')),
     path('workorders/', include('workorders.urls')),
+    path('pm/', include('pm.urls')), # <-- Tambahkan baris ini!
     
-    # UBAH permanent MENJADI False (Menggunakan HTTP 302 Temporary Redirect)
     path('', RedirectView.as_view(url='/workorders/dashboard/', permanent=False)),
 ]

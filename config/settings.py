@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'assets.apps.AssetsConfig',
     'workorders.apps.WorkordersConfig',
+    'pm.apps.PmConfig',
 ]
 
 MIDDLEWARE = [

@@ -1,4 +1,5 @@
 # workorders/views.py
+from pm.utils import trigger_preventive_maintenance
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.db.models import Sum
@@ -6,6 +7,14 @@ from .models import WorkOrder
 from .forms import WorkOrderForm, WorkOrderUpdateStatusForm
 
 def cmms_dashboard(request):
+    # Logika Trigger Tombol PM Manual
+    if 'trigger_pm' in request.GET:
+        count = trigger_preventive_maintenance()
+        if count > 0:
+            messages.success(request, f"Sukses! {count} Work Order berkala (PM) otomatis diterbitkan.")
+        else:
+            messages.info(request, "Pemeriksaan Selesai: Tidak ada jadwal PM yang jatuh tempo hari ini.")
+        return redirect('workorders:dashboard')
     # Prosedur input tiket kerja baru jika user submit form
     if request.method == 'POST':
         form = WorkOrderForm(request.POST)
