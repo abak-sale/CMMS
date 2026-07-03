@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Pembaruan Status Work Order</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow border-0">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h4 class="mb-0 fw-bold">Eksekusi Lapangan: {{ work_order.wo_number }}</h4>
+                    </div>
+                    <div class="card-body bg-white">
+                        <table class="table table-bordered bg-light small">
+                            <tr><th style="width: 35%">Nama Aktivitas</th><td><strong>{{ work_order.title }}</strong></td></tr>
+                            <tr><th>Aset Mesin</th><td>{{ work_order.asset.equipment_id }} - {{ work_order.asset.equipment_name }}</td></tr>
+                            <tr><th>Deskripsi Masalah</th><td><span class="text-muted">{{ work_order.description }}</span></td></tr>
+                        </table>
+
+                        <form method="post" class="mt-4 border-top pt-3">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Ubah Status Progress Kerja</label>
+                                {{ form.status }}
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Input Jam Kerugian/Downtime Mesin (Jam)</label>
+                                {{ form.downtime_hours }}
+                                <div class="form-text small text-muted">Gunakan titik untuk desimal. Contoh: 1.5 jika mati selama 1 Jam 30 Menit</div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between mt-4">
+                                <a href="{% url 'workorders:dashboard' %}" class="btn btn-secondary fw-bold">Batal / Kembali</a>
+                                <button type="submit" class="btn btn-primary fw-bold">Simpan Progress</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
