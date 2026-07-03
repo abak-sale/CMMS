@@ -1,4 +1,5 @@
 # workorders/models.py
+from inventory.models import SparePart
 from django.db import models
 from django.conf import settings
 from assets.models import Asset # Mengambil model Asset yang sudah sukses kita buat sebelumnya
@@ -68,3 +69,24 @@ class WorkOrder(models.Model):
 
     def __str__(self):
         return f"{self.wo_number} - {self.title} [{self.get_status_display()}]"
+    
+class WorkOrderPartConsumption(models.Model):
+    """Tabel jembatan untuk mencatat pemakaian spare part pada suatu Work Order"""
+    work_order = models.ForeignKey('WorkOrder', on_delete=models.CASCADE, related_name='part_consumptions')
+    spare_part = models.ForeignKey(SparePart, on_delete=models.PROTECT, related_name='wo_usages')
+    quantity_used = models.IntegerField(default=1, verbose_name="Jumlah Digunakan")
+    consumed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "WO Part Consumption"
+        unique_together = ('work_order', 'spare_part') # Cegah part yang sama di-input dua kali di 1 WO
+
+    def __str__(self):
+        return f"{self.quantity_used} pcs {self.spare_part.name} digunakan pada {self.work_order.wo_number}"
+
+    # Logika otomatisasi potong stok gudang saat data pemakaian disimpan
+    def save(self, *args, **kwargs):
+        if not self.pk: # Jika ini adalah input pemakaian baru (bukan edit)
+            self.spare_part.stock -= self.quantity_used
+            self.spare_part.save()
+        super().save(*args, **kwargs)
